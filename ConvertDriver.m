@@ -6,7 +6,7 @@
 
 materials = {'AA5754_data','HPAl_strain_data'};
 
-for mm = 1 %: 2
+for mm = 2
     % cycle over materials
     fldrs = strsplit(genpath( materials{mm} ),':');
     for dd = 1 : numel( fldrs );
@@ -51,7 +51,7 @@ for mm = 1 %: 2
             if iscell(data)
                 tags = { data{ff}.experdirec data{ff}.sampnm};
             else
-                tags = { data(ff).experdirec data(ff).sampnm};
+                tags = { materials{mm} };
             end
             matinpublish( data, 'title', sprintf('%s-folder-data',regexprep(fldrs{dd},filesep,'-')),...
                 'tags',tags);
