@@ -6,12 +6,16 @@
 
 materials = {'AA5754_data','HPAl_strain_data'};
 
-for mm = 1 : 2
+for mm = 1 %: 2
     % cycle over materials
     fldrs = strsplit(genpath( materials{mm} ),':');
-    for dd = 1 : numel( fldrs );
+    for dd =17% 1 : numel( fldrs );
         files = dir( fldrs{dd} );
-        bf = find(~[files.isdir] & ~ismember({files(:).name},'.DS_Store') );
+        
+        % Add a statement to only look at text files, the directory
+        % structures are different for AA5754
+        bf = find(~[files.isdir] & ~ismember({files(:).name},'.DS_Store') & ...
+            cellfun(@(x)numel(strfind(x,'.txt'))>0, {files(:).name}) );
         
         for ff = 1 : numel(bf)
             if ff == 1
@@ -32,8 +36,9 @@ for mm = 1 : 2
             
         end
         if ff > 1 
+            
             matinpublish( data, 'title', sprintf('%s-folder-data',regexprep(fldrs{dd},filesep,'-')));
-            return
+%             return% Debugging statement
         end
         %
         %         strsplit( genpath( fullfile( '.',materials{mm})) )
