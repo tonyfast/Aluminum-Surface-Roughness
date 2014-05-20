@@ -30,16 +30,31 @@ for mm = 1 %: 2
                     % This is a cell array because of dissimilar structures
                     % for differnet files
                     data{ff} = ConvertSurfaceAA5754(fn,param );
-                    data.tags = { data{ff}.experdirec data{ff}.sampnm};
+                    % Add tags to data for web
                 case 'HPAl_strain_data'
                     data(ff) = ConvertSurfaceHPA( fn,param);
+                    
             end            
             
-            % Add tags to data for web
+            
         end
         if ff > 1 
             
-            matinpublish( data, 'title', sprintf('%s-folder-data',regexprep(fldrs{dd},filesep,'-')));
+            %% Adding tags to datasets
+            % Happens at the function level call, it is not part of the
+            % data structure.
+            
+            %asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;
+            % This is a middle index and its a huge hack
+            ff = 3; % This is a middle index and its a huge hack
+            %asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;
+            if iscell(data)
+                tags = { data{ff}.experdirec data{ff}.sampnm};
+            else
+                tags = { data(ff).experdirec data(ff).sampnm};
+            end
+            matinpublish( data, 'title', sprintf('%s-folder-data',regexprep(fldrs{dd},filesep,'-')),...
+                'tags',tags);
 %             return% Debugging statement
         end
         %
