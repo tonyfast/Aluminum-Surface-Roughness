@@ -6,6 +6,8 @@ if nargin == 1
 end
 
 data.surfaceheight = importdata( file );
+
+%% Unbiased statistical measures
 data.averageheight = mean(data.surfaceheight(:));
 data.stdheight = std(data.surfaceheight(:));
 
