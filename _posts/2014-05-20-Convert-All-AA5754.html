@@ -1,0 +1,193 @@
+---
+layout: report
+title: Convert All AA5754
+
+---
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ConvertDriver</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-05-20"><meta name="DC.source" content="ConvertDriver.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+
+
+
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 0px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Convert all surface data to webpages</a></li><li><a href="#2">Adding tags to datasets</a></li></ul></div><h2>Convert all surface data to webpages<a name="1"></a></h2><p>Here's some markup</p><div><ul><li>list1</li><li>list2</li></ul></div><pre class="codeinput">materials = {<span class="string">'AA5754_data'</span>,<span class="string">'HPAl_strain_data'</span>};
+
+<span class="keyword">for</span> mm = 1 <span class="comment">%: 2</span>
+    <span class="comment">% cycle over materials</span>
+    fldrs = strsplit(genpath( materials{mm} ),<span class="string">':'</span>);
+    <span class="keyword">for</span> dd = 1 : numel( fldrs );
+        files = dir( fldrs{dd} );
+
+        <span class="comment">% Add a statement to only look at text files, the directory</span>
+        <span class="comment">% structures are different for AA5754</span>
+        bf = find(~[files.isdir] &amp; ~ismember({files(:).name},<span class="string">'.DS_Store'</span>) &amp; <span class="keyword">...</span>
+            cellfun(@(x)numel(strfind(x,<span class="string">'.txt'</span>))&gt;0, {files(:).name}) );
+
+        <span class="keyword">for</span> ff = 1 : numel(bf)
+            <span class="keyword">if</span> ff == 1
+                clear <span class="string">data</span>;
+            <span class="keyword">end</span>
+            fn = fullfile( fldrs{dd}, files(bf(ff)).name );
+
+
+            param.plotpre = regexprep(files(bf(ff)).name,<span class="string">'.txt'</span>,<span class="string">''</span>);
+            <span class="keyword">switch</span> materials{mm}
+                <span class="keyword">case</span> <span class="string">'AA5754_data'</span>
+                    <span class="comment">% This is a cell array because of dissimilar structures</span>
+                    <span class="comment">% for differnet files</span>
+                    data{ff} = ConvertSurfaceAA5754(fn,param );
+                    <span class="comment">% Add tags to data for web</span>
+                <span class="keyword">case</span> <span class="string">'HPAl_strain_data'</span>
+                    data(ff) = ConvertSurfaceHPA( fn,param);
+
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> ff &gt; 1
+</pre><h2>Adding tags to datasets<a name="2"></a></h2><p>Happens at the function level call, it is not part of the data structure.</p><pre class="codeinput">            <span class="comment">%asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;</span>
+            <span class="comment">% This is a middle index and its a huge hack</span>
+            ff = 3; <span class="comment">% This is a middle index and its a huge hack</span>
+            <span class="comment">%asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;</span>
+            <span class="keyword">if</span> iscell(data)
+                tags = { data{ff}.experdirec data{ff}.sampnm};
+            <span class="keyword">else</span>
+                tags = { data(ff).experdirec data(ff).sampnm};
+            <span class="keyword">end</span>
+            matinpublish( data, <span class="string">'title'</span>, sprintf(<span class="string">'%s-folder-data'</span>,regexprep(fldrs{dd},filesep,<span class="string">'-'</span>)),<span class="keyword">...</span>
+                <span class="string">'tags'</span>,tags);
+<span class="comment">%             return% Debugging statement</span>
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+        <span class="comment">%</span>
+        <span class="comment">%         strsplit( genpath( fullfile( '.',materials{mm})) )</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Convert all surface data to webpages
+% Here's some markup
+%
+% * list1
+% * list2
+
+materials = {'AA5754_data','HPAl_strain_data'};
+
+for mm = 1 %: 2
+    % cycle over materials
+    fldrs = strsplit(genpath( materials{mm} ),':');
+    for dd = 1 : numel( fldrs );
+        files = dir( fldrs{dd} );
+        
+        % Add a statement to only look at text files, the directory
+        % structures are different for AA5754
+        bf = find(~[files.isdir] & ~ismember({files(:).name},'.DS_Store') & ...
+            cellfun(@(x)numel(strfind(x,'.txt'))>0, {files(:).name}) );
+        
+        for ff = 1 : numel(bf)
+            if ff == 1
+                clear data;
+            end
+            fn = fullfile( fldrs{dd}, files(bf(ff)).name );
+            
+            
+            param.plotpre = regexprep(files(bf(ff)).name,'.txt','');
+            switch materials{mm}
+                case 'AA5754_data'
+                    % This is a cell array because of dissimilar structures
+                    % for differnet files
+                    data{ff} = ConvertSurfaceAA5754(fn,param );
+                    % Add tags to data for web
+                case 'HPAl_strain_data'
+                    data(ff) = ConvertSurfaceHPA( fn,param);
+                    
+            end            
+            
+            
+        end
+        if ff > 1 
+            
+            %% Adding tags to datasets
+            % Happens at the function level call, it is not part of the
+            % data structure.
+            
+            %asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;
+            % This is a middle index and its a huge hack
+            ff = 3; % This is a middle index and its a huge hack
+            %asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;
+            if iscell(data)
+                tags = { data{ff}.experdirec data{ff}.sampnm};
+            else
+                tags = { data(ff).experdirec data(ff).sampnm};
+            end
+            matinpublish( data, 'title', sprintf('%s-folder-data',regexprep(fldrs{dd},filesep,'-')),...
+                'tags',tags);
+%             return% Debugging statement
+        end
+        %
+        %         strsplit( genpath( fullfile( '.',materials{mm})) )
+    end
+    
+end
+##### SOURCE END #####
+--></body></html>

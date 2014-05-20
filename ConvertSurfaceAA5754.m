@@ -60,8 +60,8 @@ if regexp( experimentmeta{end-1},'_' )
 else
     [data.experinc] = strtok(experimentmeta{end-1},'_');
     data.sampnm = strtok(experimentmeta{end-2},'_data');
-    data.experdirec = 'none';
-    data.experinc = 0;
+    data.experdirec = 'Polished';
+    data.experinc = 'none';
 end
 
 data.name = data.experrve(2:end);
