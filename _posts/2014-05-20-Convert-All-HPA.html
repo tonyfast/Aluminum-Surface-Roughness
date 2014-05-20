@@ -1,0 +1,627 @@
+---
+layout: report
+title: Convert All HPA
+
+---
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ConvertDriver</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-05-20"><meta name="DC.source" content="ConvertDriver.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+
+
+
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 0px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Convert all surface data to webpages</a></li><li><a href="#2">Adding tags to datasets</a></li></ul></div><h2>Convert all surface data to webpages<a name="1"></a></h2><p>Here's some markup</p><div><ul><li>list1</li><li>list2</li></ul></div><pre class="codeinput">materials = {<span class="string">'AA5754_data'</span>,<span class="string">'HPAl_strain_data'</span>};
+
+<span class="keyword">for</span> mm = 2
+    <span class="comment">% cycle over materials</span>
+    fldrs = strsplit(genpath( materials{mm} ),<span class="string">':'</span>);
+    <span class="keyword">for</span> dd = 1 : numel( fldrs );
+        files = dir( fldrs{dd} );
+
+        <span class="comment">% Add a statement to only look at text files, the directory</span>
+        <span class="comment">% structures are different for AA5754</span>
+        bf = find(~[files.isdir] &amp; ~ismember({files(:).name},<span class="string">'.DS_Store'</span>) &amp; <span class="keyword">...</span>
+            cellfun(@(x)numel(strfind(x,<span class="string">'.txt'</span>))&gt;0, {files(:).name}) );
+
+        <span class="keyword">for</span> ff = 1 : numel(bf)
+            <span class="keyword">if</span> ff == 1
+                clear <span class="string">data</span>;
+            <span class="keyword">end</span>
+            fn = fullfile( fldrs{dd}, files(bf(ff)).name );
+
+
+            param.plotpre = regexprep(files(bf(ff)).name,<span class="string">'.txt'</span>,<span class="string">''</span>);
+            <span class="keyword">switch</span> materials{mm}
+                <span class="keyword">case</span> <span class="string">'AA5754_data'</span>
+                    <span class="comment">% This is a cell array because of dissimilar structures</span>
+                    <span class="comment">% for differnet files</span>
+                    data{ff} = ConvertSurfaceAA5754(fn,param );
+                    <span class="comment">% Add tags to data for web</span>
+                <span class="keyword">case</span> <span class="string">'HPAl_strain_data'</span>
+                    data(ff) = ConvertSurfaceHPA( fn,param);
+
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> ff &gt; 1
+</pre><h2>Adding tags to datasets<a name="2"></a></h2><p>Happens at the function level call, it is not part of the data structure.</p><pre class="codeinput">            <span class="comment">%asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;</span>
+            <span class="comment">% This is a middle index and its a huge hack</span>
+            ff = 3; <span class="comment">% This is a middle index and its a huge hack</span>
+            <span class="comment">%asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;</span>
+            <span class="keyword">if</span> iscell(data)
+                tags = { data{ff}.experdirec data{ff}.sampnm};
+            <span class="keyword">else</span>
+                tags = { materials{mm} };
+            <span class="keyword">end</span>
+            matinpublish( data, <span class="string">'title'</span>, sprintf(<span class="string">'%s-folder-data'</span>,regexprep(fldrs{dd},filesep,<span class="string">'-'</span>)),<span class="keyword">...</span>
+                <span class="string">'tags'</span>,tags);
+<span class="comment">%             return% Debugging statement</span>
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+        <span class="comment">%</span>
+        <span class="comment">%         strsplit( genpath( fullfile( '.',materials{mm})) )</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -2.1626e-08
+         stdheight: 0.8188
+        kurtheight: 2.8362
+    skewnessheight: -0.2556
+         maxheight: 3.2059
+         minheight: -5.5141
+             image: {'Strain000F-1.png'  'Strain000F-2.png'}
+              step: 0
+              name: '000'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 2.3027e-09
+         stdheight: 0.9792
+        kurtheight: 2.7430
+    skewnessheight: -0.0784
+         maxheight: 11.1730
+         minheight: -6.3592
+             image: {'Strain005F-1.png'  'Strain005F-2.png'}
+              step: 5
+              name: '005'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 5.8621e-09
+         stdheight: 0.9342
+        kurtheight: 2.6795
+    skewnessheight: -0.2118
+         maxheight: 9.0194
+         minheight: -5.9697
+             image: {'Strain010F-1.png'  'Strain010F-2.png'}
+              step: 10
+              name: '010'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -3.3352e-09
+         stdheight: 0.9511
+        kurtheight: 2.7016
+    skewnessheight: -0.2336
+         maxheight: 9.2060
+         minheight: -5.1831
+             image: {'Strain015F-1.png'  'Strain015F-2.png'}
+              step: 15
+              name: '015'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 3.1620e-08
+         stdheight: 0.9723
+        kurtheight: 2.7666
+    skewnessheight: -0.2984
+         maxheight: 9.5255
+         minheight: -6.4872
+             image: {'Strain020F-1.png'  'Strain020F-2.png'}
+              step: 20
+              name: '020'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 5.7480e-09
+         stdheight: 0.9506
+        kurtheight: 2.8131
+    skewnessheight: -0.3431
+         maxheight: 7.8924
+         minheight: -6.2410
+             image: {'Strain025F-1.png'  'Strain025F-2.png'}
+              step: 25
+              name: '025'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -3.5573e-08
+         stdheight: 0.9394
+        kurtheight: 2.9985
+    skewnessheight: -0.3654
+         maxheight: 9.3753
+         minheight: -5.6079
+             image: {'Strain030F-1.png'  'Strain030F-2.png'}
+              step: 30
+              name: '030'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 1.0557e-09
+         stdheight: 0.9459
+        kurtheight: 3.0946
+    skewnessheight: -0.3941
+         maxheight: 8.7000
+         minheight: -6.0397
+             image: {'Strain035F-1.png'  'Strain035F-2.png'}
+              step: 35
+              name: '035'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -8.3653e-09
+         stdheight: 0.9598
+        kurtheight: 3.2110
+    skewnessheight: -0.4104
+         maxheight: 8.4435
+         minheight: -7.5417
+             image: {'Strain040F-1.png'  'Strain040F-2.png'}
+              step: 40
+              name: '040'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -4.1668e-08
+         stdheight: 0.9924
+        kurtheight: 3.2765
+    skewnessheight: -0.3748
+         maxheight: 10.0030
+         minheight: -7.0799
+             image: {'Strain045F-1.png'  'Strain045F-2.png'}
+              step: 45
+              name: '045'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -5.4613e-10
+         stdheight: 1.0025
+        kurtheight: 3.3239
+    skewnessheight: -0.4017
+         maxheight: 7.3935
+         minheight: -7.2466
+             image: {'Strain050F-1.png'  'Strain050F-2.png'}
+              step: 50
+              name: '050'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -6.7780e-08
+         stdheight: 1.0356
+        kurtheight: 3.3717
+    skewnessheight: -0.3948
+         maxheight: 8.0867
+         minheight: -6.6123
+             image: {'Strain055F-1.png'  'Strain055F-2.png'}
+              step: 55
+              name: '055'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -4.4813e-08
+         stdheight: 1.0528
+        kurtheight: 3.3982
+    skewnessheight: -0.3440
+         maxheight: 8.4826
+         minheight: -9.1339
+             image: {'Strain060F-1.png'  'Strain060F-2.png'}
+              step: 60
+              name: '060'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -2.1090e-08
+         stdheight: 1.0864
+        kurtheight: 3.3364
+    skewnessheight: -0.3411
+         maxheight: 8.4004
+         minheight: -7.7336
+             image: {'Strain065F-1.png'  'Strain065F-2.png'}
+              step: 65
+              name: '065'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -1.2367e-08
+         stdheight: 1.1074
+        kurtheight: 3.3614
+    skewnessheight: -0.3177
+         maxheight: 9.2702
+         minheight: -7.8988
+             image: {'Strain070F-1.png'  'Strain070F-2.png'}
+              step: 70
+              name: '070'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -6.9249e-08
+         stdheight: 1.1596
+        kurtheight: 3.3806
+    skewnessheight: -0.3031
+         maxheight: 9.7062
+         minheight: -7.8042
+             image: {'Strain075F-1.png'  'Strain075F-2.png'}
+              step: 75
+              name: '075'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -2.7314e-08
+         stdheight: 1.2191
+        kurtheight: 3.1244
+    skewnessheight: -0.3382
+         maxheight: 7.5877
+         minheight: -9.6002
+             image: {'Strain080F-1.png'  'Strain080F-2.png'}
+              step: 80
+              name: '080'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -6.7612e-08
+         stdheight: 1.2470
+        kurtheight: 3.1017
+    skewnessheight: -0.3298
+         maxheight: 8.1547
+         minheight: -9.1952
+             image: {'Strain085F-1.png'  'Strain085F-2.png'}
+              step: 85
+              name: '085'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 2.4616e-08
+         stdheight: 1.2931
+        kurtheight: 3.0024
+    skewnessheight: -0.3062
+         maxheight: 9.0879
+         minheight: -8.9392
+             image: {'Strain090F-1.png'  'Strain090F-2.png'}
+              step: 90
+              name: '090'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 5.5629e-08
+         stdheight: 1.3046
+        kurtheight: 3.0943
+    skewnessheight: -0.3065
+         maxheight: 8.8479
+         minheight: -17.0870
+             image: {'Strain095F-1.png'  'Strain095F-2.png'}
+              step: 95
+              name: '095'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -3.9267e-08
+         stdheight: 1.3639
+        kurtheight: 2.9165
+    skewnessheight: -0.2812
+         maxheight: 10.3140
+         minheight: -7.7349
+             image: {'Strain100F-1.png'  'Strain100F-2.png'}
+              step: 100
+              name: '100'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -5.2303e-08
+         stdheight: 1.4632
+        kurtheight: 2.8879
+    skewnessheight: -0.2997
+         maxheight: 9.3948
+         minheight: -7.8114
+             image: {'Strain110F-1.png'  'Strain110F-2.png'}
+              step: 110
+              name: '110'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -3.7803e-08
+         stdheight: 1.5918
+        kurtheight: 2.8466
+    skewnessheight: -0.2871
+         maxheight: 9.0200
+         minheight: -16.8960
+             image: {'Strain120F-1.png'  'Strain120F-2.png'}
+              step: 120
+              name: '120'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -8.0110e-08
+         stdheight: 1.7067
+        kurtheight: 2.8421
+    skewnessheight: -0.3090
+         maxheight: 10.9640
+         minheight: -13.2360
+             image: {'Strain130F-1.png'  'Strain130F-2.png'}
+              step: 130
+              name: '130'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -5.1388e-08
+         stdheight: 1.8030
+        kurtheight: 2.8206
+    skewnessheight: -0.2978
+         maxheight: 9.4393
+         minheight: -16.1140
+             image: {'Strain140F-1.png'  'Strain140F-2.png'}
+              step: 140
+              name: '140'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -2.7247e-08
+         stdheight: 1.9438
+        kurtheight: 2.8434
+    skewnessheight: -0.2674
+         maxheight: 9.7859
+         minheight: -16.0710
+             image: {'Strain150F-1.png'  'Strain150F-2.png'}
+              step: 150
+              name: '150'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 1.2345e-08
+         stdheight: 2.0218
+        kurtheight: 2.8338
+    skewnessheight: -0.2742
+         maxheight: 10.8760
+         minheight: -13.0650
+             image: {'Strain160F-1.png'  'Strain160F-2.png'}
+              step: 160
+              name: '160'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -1.0978e-08
+         stdheight: 2.2940
+        kurtheight: 2.9680
+    skewnessheight: -0.3111
+         maxheight: 9.0058
+         minheight: -21.1230
+             image: {'Strain180F-1.png'  'Strain180F-2.png'}
+              step: 180
+              name: '180'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: 5.0254e-08
+         stdheight: 2.4864
+        kurtheight: 3.1423
+    skewnessheight: -0.3581
+         maxheight: 10.9000
+         minheight: -20.9210
+             image: {'Strain200F-1.png'  'Strain200F-2.png'}
+              step: 200
+              name: '200'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -3.7403e-08
+         stdheight: 2.7296
+        kurtheight: 3.4124
+    skewnessheight: -0.4401
+         maxheight: 12.9600
+         minheight: -22.2160
+             image: {'Strain220F-1.png'  'Strain220F-2.png'}
+              step: 220
+              name: '220'
+
+
+data = 
+
+     surfaceheight: [512x512 double]
+     averageheight: -3.6055e-08
+         stdheight: 2.9788
+        kurtheight: 3.4563
+    skewnessheight: -0.4345
+         maxheight: 11.6690
+         minheight: -22.6170
+             image: {'Strain240F-1.png'  'Strain240F-2.png'}
+              step: 240
+              name: '240'
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Convert all surface data to webpages
+% Here's some markup
+%
+% * list1
+% * list2
+
+materials = {'AA5754_data','HPAl_strain_data'};
+
+for mm = 2
+    % cycle over materials
+    fldrs = strsplit(genpath( materials{mm} ),':');
+    for dd = 1 : numel( fldrs );
+        files = dir( fldrs{dd} );
+        
+        % Add a statement to only look at text files, the directory
+        % structures are different for AA5754
+        bf = find(~[files.isdir] & ~ismember({files(:).name},'.DS_Store') & ...
+            cellfun(@(x)numel(strfind(x,'.txt'))>0, {files(:).name}) );
+        
+        for ff = 1 : numel(bf)
+            if ff == 1
+                clear data;
+            end
+            fn = fullfile( fldrs{dd}, files(bf(ff)).name );
+            
+            
+            param.plotpre = regexprep(files(bf(ff)).name,'.txt','');
+            switch materials{mm}
+                case 'AA5754_data'
+                    % This is a cell array because of dissimilar structures
+                    % for differnet files
+                    data{ff} = ConvertSurfaceAA5754(fn,param );
+                    % Add tags to data for web
+                case 'HPAl_strain_data'
+                    data(ff) = ConvertSurfaceHPA( fn,param);
+                    
+            end            
+            
+            
+        end
+        if ff > 1 
+            
+            %% Adding tags to datasets
+            % Happens at the function level call, it is not part of the
+            % data structure.
+            
+            %asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;
+            % This is a middle index and its a huge hack
+            ff = 3; % This is a middle index and its a huge hack
+            %asdflasdjflkjahsdlfkjas;ldkjf;laskjdfl;
+            if iscell(data)
+                tags = { data{ff}.experdirec data{ff}.sampnm};
+            else
+                tags = { materials{mm} };
+            end
+            matinpublish( data, 'title', sprintf('%s-folder-data',regexprep(fldrs{dd},filesep,'-')),...
+                'tags',tags);
+%             return% Debugging statement
+        end
+        %
+        %         strsplit( genpath( fullfile( '.',materials{mm})) )
+    end
+    
+end
+##### SOURCE END #####
+--></body></html>
