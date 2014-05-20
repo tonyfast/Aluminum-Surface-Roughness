@@ -9,7 +9,7 @@ materials = {'AA5754_data','HPAl_strain_data'};
 for mm = 1 %: 2
     % cycle over materials
     fldrs = strsplit(genpath( materials{mm} ),':');
-    for dd =17% 1 : numel( fldrs );
+    for dd = 1 : numel( fldrs );
         files = dir( fldrs{dd} );
         
         % Add a statement to only look at text files, the directory
@@ -30,10 +30,12 @@ for mm = 1 %: 2
                     % This is a cell array because of dissimilar structures
                     % for differnet files
                     data{ff} = ConvertSurfaceAA5754(fn,param );
+                    data.tags = { data{ff}.experdirec data{ff}.sampnm};
                 case 'HPAl_strain_data'
                     data(ff) = ConvertSurfaceHPA( fn,param);
             end            
             
+            % Add tags to data for web
         end
         if ff > 1 
             
