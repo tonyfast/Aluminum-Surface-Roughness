@@ -8,6 +8,11 @@ end
 data.surfaceheight = importdata( file );
 data.averageheight = mean(data.surfaceheight(:));
 data.stdheight = std(data.surfaceheight(:));
+
+% Add higher statistics moments because distributions look skew
+data.kurtheight = kurtosis(data.surfaceheight(:));
+data.skewnessheight = skewness(data.surfaceheight(:));
+
 data.maxheight = max(data.surfaceheight(:));
 data.minheight = min(data.surfaceheight(:));
 
