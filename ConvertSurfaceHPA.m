@@ -25,6 +25,10 @@ if numel(param.plotpre)>0
     pcolor( data.surfaceheight );
     axis equal; shading flat;
 
+% I think b&w is easier on the eyes
+    colormap gray
+    
+
     hc = colorbar;
     set( get( hc,'ylabel'),'String', 'Surface Height','VerticalAlignment','Bottom', 'Fontsize',16);
     xlabel( 'microns','Fontsize',16); ylabel( 'microns','Fontsize',16);
