@@ -1,0 +1,9 @@
+# Removed for analysis
+AA5754_data
+HPAl_strain_data
+_site
+
+# Raw data is in the form of text files.  I want to ignore that.
+# I am going to ignore all text files.  This could have averse consequences
+
+*.txt

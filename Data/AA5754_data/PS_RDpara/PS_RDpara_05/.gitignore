@@ -1,0 +1,5 @@
+# Raw data files are txt and out.
+# They do not need to be versioned
+
+*.txt
+*.out
